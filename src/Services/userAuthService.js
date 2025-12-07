@@ -24,7 +24,11 @@ const registerUser = async (name, email, password ,termsandconditions , ipAddres
 
         const token = await generateToken(newUser._id, "Register", ipAddress, userAgent);
 
-        await sendMail(newUser.email, newUser.name, token.token);
+        const Link = `${process.env.Clinet_URL}/user/verify?user=${newUser._id}token=${token.token}`;
+
+        await sendMail(newUser.email, newUser.name,    Link);
+
+
 
     } catch (error) {
         console.log(error);

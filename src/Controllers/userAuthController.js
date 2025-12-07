@@ -11,8 +11,6 @@ const registerUserController = async (req,res)=> {
     // ✅ Correct way to get User Agent
     const userAgent = req.headers["user-agent"];
 
-    console.log("IP:", ipAddress);
-    console.log("UserAgent:", userAgent);
         const {name,email,password,termsandconditions} = req.body;
 
         const user = await registerUser(name,email,password,termsandconditions,ipAddress,userAgent);
