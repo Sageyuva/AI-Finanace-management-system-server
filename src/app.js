@@ -13,6 +13,12 @@ app.use(express.json())
 //baseUrl
 const baseurl = process.env.BASE_URL
 
+const apiRouter = express.Router();
+app.use(baseurl,apiRouter);
+
+//userAuthRoutes
+const UserRoute = require("./Routes/userRoute")
+apiRouter.use("/user",UserRoute);
 
 //routes
 app.get(baseurl, (req, res) => {
