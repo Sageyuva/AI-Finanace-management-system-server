@@ -1,9 +1,10 @@
 const userModel = require("../Models/userModel")
 const tokenModel = require("../Models/tokenModel")
-const {hashPassward} = require("../Utils/Encrypt/hash")
+const {hashPassward, comparePassword} = require("../Utils/Encrypt/hash")
 const {generateToken , verifyToken} = require("../Utils/Token/Token")
 const {sendMail} = require("../Utils/Mail/registerMail")
-//register user service
+const {jwtSign} = require("../Middleware/secure")
+// user register service
 const registerUserService = async(name,email,password,ip,useragent) => {
 
     try {
@@ -53,8 +54,7 @@ const registerUserService = async(name,email,password,ip,useragent) => {
     }
 
 }
-
-
+// user verification service
 const verifyUserService = async(userId,token) => {
     try {
         //find yuser and check if verified
@@ -80,5 +80,32 @@ const verifyUserService = async(userId,token) => {
         return false
     }
 }
-
-module.exports = {registerUserService , verifyUserService}
+// user login service user 
+const loginUserService = async(email,password)=> {
+ try {
+    //find user
+    const user = await userModel.findOne({email}).select("+password")
+    if(!user){
+        throw new Error("User is invalid")
+    }
+    //chekc if user is verified
+    if(!user.isVerified){
+        throw new Error("User is not verified")
+    }
+    console.log(user)
+    const hash = user.password
+    //compare passwords
+    const isPasswordMatched = await comparePassword(password,hash)
+    if(!isPasswordMatched){
+        throw new Error("Password is invalid")
+    }
+    //generate jwt
+  const token = await jwtSign(user._id)
+    //return usertoken
+    return token
+ } catch (error) {
+    console.log("User login failed" , error)
+    return error
+ }
+}
+module.exports = {registerUserService , verifyUserService , loginUserService}

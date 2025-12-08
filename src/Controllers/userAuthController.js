@@ -1,4 +1,4 @@
-const {registerUserService , verifyUserService} = require("../Services/userAuthServices")
+const {registerUserService , verifyUserService , loginUserService} = require("../Services/userAuthServices")
 
 const registerUserController = async(req,res) => {
     try {
@@ -33,4 +33,19 @@ const verifyUserController = async(req,res) => {
     }
 }
 
-module.exports = {registerUserController,verifyUserController}
+const loginUserController = async(req,res)=>{
+try {
+    const {email,password} = req.body
+    const token = await loginUserService(email,password)
+    if(token){
+        res.status(200).json({message:"User logged in successfully" , token})
+    }
+    else{
+        res.status(400).json({message:"User login failed"})
+    }
+} catch (error) {
+    res.status(500).json({message:error.message})
+}
+}
+
+module.exports = {registerUserController,verifyUserController,loginUserController}
