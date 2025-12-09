@@ -32,8 +32,9 @@ const registerUserService = async(name,email,password,ip,useragent) => {
         const rawToken = await token.rawToken
         const encryptedToken = await token.encryptedToken
         //save token
-         await tokenModel.create({userId:user._id,token:token.encryptedToken,ip,useragent})
-
+         const SavedTokenData =  await tokenModel.create({userId:user._id,token:encryptedToken,ip,useragent})
+         console.log(SavedTokenData)
+         
         //send mail
         const verificationLink = `${process.env.Clinet_URL}/verify?userId=${user._id}&token=${rawToken}`
         await sendMail(email,name,verificationLink)
@@ -111,4 +112,9 @@ const loginUserService = async(email,password)=> {
     return error
  }
 }
+
+//Forgot Password service
+//Update Password service
+//Update forgot password service
+
 module.exports = {registerUserService , verifyUserService , loginUserService}
