@@ -4,6 +4,7 @@ const {hashPassward, comparePassword} = require("../Utils/Encrypt/hash")
 const {generateToken , verifyToken} = require("../Utils/Token/Token")
 const {sendMail} = require("../Utils/Mail/registerMail")
 const {jwtSign} = require("../Middleware/secure")
+const {VerifiedsendMail} = require("../Utils/Mail/verificationMail")
 // user register service
 const registerUserService = async(name,email,password,ip,useragent) => {
 
@@ -74,6 +75,8 @@ const verifyUserService = async(userId,token) => {
         tokenDb.isUsed = true
         await tokenDb.save()
         await user.save()
+        //send mail
+        await VerifiedsendMail(user.email,user.name)
       return true
     } catch (error) {
         console.log("User verification failed" , error)
