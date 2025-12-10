@@ -1,4 +1,4 @@
-const {registerUserService , verifyUserService , loginUserService} = require("../Services/userAuthServices")
+const {forgotPasswordService , registerUserService , verifyUserService , loginUserService , updateForgotPasswordService} = require("../Services/userAuthServices")
 
 const registerUserController = async(req,res) => {
     try {
@@ -48,4 +48,37 @@ try {
 }
 }
 
-module.exports = {registerUserController,verifyUserController,loginUserController}
+
+const forgotPasswordController = async (req,res)=> {
+    try {
+        const {email} = req.body
+        const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const useragent = req.headers['user-agent']
+        const user = await forgotPasswordService(email,ip,useragent)
+        if(user){
+            res.status(200).json({message:"User forgot password successfully"})
+        }else{
+            res.status(400).json({message:"User forgot password failed"})
+        }
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+const updateForgotPasswordController = async (req,res)=> {
+    try {
+        const {newPassword} = req.body
+        const {userId,token,tokenId} = req.query
+        const user = await updateForgotPasswordService(userId,token,tokenId,newPassword)
+        if(user){
+            res.status(200).json({message:"User updated password successfully"})
+        }else{
+            res.status(400).json({message:"User updated password failed"})
+        }
+    } catch (error) {
+        res.status(500).json({message:error.message})
+    }
+}
+
+
+module.exports = {registerUserController,verifyUserController,loginUserController,forgotPasswordController , updateForgotPasswordController }
