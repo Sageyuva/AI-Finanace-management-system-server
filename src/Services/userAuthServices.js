@@ -38,7 +38,7 @@ const registerUserService = async(name,email,password,ip,useragent) => {
          console.log(SavedTokenData._id)
          
         //send mail
-        const verificationLink = `${process.env.Clinet_URL}/verify?userId=${user._id}&token=${rawToken}&tokenid=${SavedTokenData._id}`
+        const verificationLink = `${process.env.Clinet_URL}/auth/verify?userId=${user._id}&token=${rawToken}&tokenid=${SavedTokenData._id}`
         await sendMail(email,name,verificationLink)
     
 

@@ -3,7 +3,10 @@ const app = express()
 const cors = require("cors")
 //middleware
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:5173"],
+  credentials: true
+}))
 //define base url
 const baseUrl = process.env.BASE_URL
 const apiRouter = express.Router()
