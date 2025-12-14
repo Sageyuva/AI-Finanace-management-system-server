@@ -1,7 +1,11 @@
+//Importing the required services
 const {forgotPasswordService , registerUserService , verifyUserService , loginUserService , updateForgotPasswordService} = require("../Services/userAuthServices")
+//Importing the required util for error handling and response
 const catchAsync  = require("../Utils/catchAsync")
+//Importing the required util for response
 const sendResponse = require("../Utils/GlobalResponse/sendResponse")
 
+//Register User controller
 
 const registerUserController = catchAsync(async(req,res)=> {
      const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -11,23 +15,21 @@ const registerUserController = catchAsync(async(req,res)=> {
          sendResponse(res,201,"User registered successfully",user)
 })
 
-
-
-
+//Verify User controller
 const verifyUserController = catchAsync(async(req,res)=> {
     const {userId,token} = req.query
     const user = await verifyUserService(userId,token)
     sendResponse(res,200,"User verified successfully",user)
 })
 
-
+//Login User controller
 const loginUserController = catchAsync(async(req,res)=>{
     const {email,password} = req.body
     const token = await loginUserService(email,password)
     sendResponse(res,200,"User logged in successfully",token)
 })
 
-
+//Forgot Password controller
 const forgotPasswordController = catchAsync(async (req,res)=> {
     const {email} = req.body
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -36,6 +38,7 @@ const forgotPasswordController = catchAsync(async (req,res)=> {
     sendResponse(res,200,"User forgot password successfully",user)
 })
 
+//Update Forgot Password controller
 const updateForgotPasswordController = catchAsync(async (req,res)=> {
     const {newPassword} = req.body
         const {userId,token,tokenId} = req.query
