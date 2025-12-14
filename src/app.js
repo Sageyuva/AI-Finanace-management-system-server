@@ -4,7 +4,7 @@ const cors = require("cors")
 //middleware
 app.use(express.json())
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:5173"],
+  origin: ["http://localhost:3000", "http://localhost:5173" , "https://ai-finanace-management-system-clien.vercel.app/"],
   credentials: true
 }))
 //define base url
