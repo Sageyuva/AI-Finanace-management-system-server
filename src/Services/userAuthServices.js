@@ -11,10 +11,6 @@ const {ForgotPasswordUpdateMail} = require("../Utils/Mail/ForgotPasswordUpdateMa
 const registerUserService = async(name,email,password,ip,useragent) => {
 
     try {
-        //allfeilds are mandatory
-        if(!name||!email||!password){
-            throw new Error("All feilds are required")
-        }
         //check if user exists
         const existingUser = await userModel.findOne({email})
         if(existingUser){
@@ -39,16 +35,18 @@ const registerUserService = async(name,email,password,ip,useragent) => {
          
         //send mail
         const verificationLink = `${process.env.Clinet_URL}/auth/verify?userId=${user._id}&token=${rawToken}&tokenid=${SavedTokenData._id}`
-        await sendMail(email,name,verificationLink)
+        // await sendMail(email,name,verificationLink)
+        //fire and forget
+        sendMail(email,name,verificationLink).catch((error) => {
+            console.log("Mail sending failed" , error)
+        })
     
 
         //return message
         if(user){
-            console.log("User registered successfully")
             return "User registered successfully"
         }
         else{
-            console.log("User registration failed")
             return "User registration failed"
         }
     } catch (error) {

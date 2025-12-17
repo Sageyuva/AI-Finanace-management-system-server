@@ -7,13 +7,17 @@ const sendResponse = require("../Utils/GlobalResponse/sendResponse")
 
 //Register User controller
 
-const registerUserController = catchAsync(async(req,res)=> {
-     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-         const useragent = req.headers['user-agent']
-          const {name,email,password} = req.body
-          const user = await registerUserService(name,email,password,ip,useragent)
-         sendResponse(res,201,"User registered successfully",user)
-})
+const registerUserController = catchAsync(async (req, res) => {
+  const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const useragent = req.headers['user-agent'];
+  const { name, email, password } = req.body;
+
+  // service throws error if something fails
+  await registerUserService(name, email, password, ip, useragent);
+
+  // only reached if everything important succeeded
+  sendResponse(res, 201, "User registered successfully", null);
+});
 
 //Verify User controller
 const verifyUserController = catchAsync(async(req,res)=> {
