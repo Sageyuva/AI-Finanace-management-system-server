@@ -1,12 +1,6 @@
-const nodemailer = require("nodemailer");
+const { Resend } = require("resend");
 
-const transporter = nodemailer.createTransport({
-    service: "gmail",
-  auth: {
-    user: process.env.NODEMAILERMAIL,
-    pass: process.env.NODEMAILERPASSWORD,
-  },
-});
+const resend = new Resend(process.env.RESEND_SECRET); 
 
 const VerifiedsendMail = async (to, name) => {
   const subject = "Verify Your Finura Account";
@@ -107,8 +101,8 @@ const VerifiedsendMail = async (to, name) => {
 `;
 
 
-  await transporter.sendMail({
-    from: `Finura <${process.env.NODEMAILERMAIL}>`,
+  await resend.emails.send({
+    from: "Finura <no-reply@yuvaraj.online>",
     to,
     subject,
     html,
