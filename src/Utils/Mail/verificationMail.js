@@ -102,7 +102,7 @@ const VerifiedsendMail = async (to, name) => {
 
 
   await resend.emails.send({
-    from: "Finura <no-reply@yuvaraj.online>",
+    from: "Finura <support@yuvaraj.online>",
     to,
     subject,
     html,

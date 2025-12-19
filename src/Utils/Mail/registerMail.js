@@ -52,7 +52,7 @@ const sendMail = async (to, name, verifyLink) => {
   `;
 
   await resend.emails.send({
-    from: "Finura <no-reply@yuvaraj.online>",
+    from: "Finura <aupport@yuvaraj.online>",
     to,
     subject,
     html,
