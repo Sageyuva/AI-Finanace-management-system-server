@@ -1,6 +1,8 @@
 const express = require("express")
 const app = express()
 const cors = require("cors")
+
+const globalErrorHandler = require('./Middleware/globalErrorRes')
 //middleware
 app.use(express.json())
 app.use(cors({
@@ -37,6 +39,6 @@ app.get("/api/v1", async (req, res) => {
   }
 });
 
-
+app.use(globalErrorHandler)
 
 module.exports = app

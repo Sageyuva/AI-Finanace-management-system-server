@@ -1,4 +1,5 @@
 const userModel = require("../Models/userModel")
+const AppError = require("../Utils/GlobalResponse/sendError")
 const tokenModel = require("../Models/tokenModel")
 const {hashPassward, comparePassword} = require("../Utils/Encrypt/hash")
 const {generateToken , verifyToken} = require("../Utils/Token/Token")
@@ -15,12 +16,12 @@ const registerUserService = async(name,email,password,ip,useragent) => {
         const existingUser = await userModel.findOne({email})
         if(existingUser){
             console.log("User already exists")
-            throw new Error("User already exists")
+            throw new AppError("User already exists",400)
         }
         //hash password if user doesnt exist
     
         const hashedPassword = await hashPassward(password)
-        console.log(hashedPassword)
+        
         //create user
         const user =  await userModel.create({name,email,password:hashedPassword})
         
@@ -31,7 +32,7 @@ const registerUserService = async(name,email,password,ip,useragent) => {
         const encryptedToken = await token.encryptedToken
         //save token
          const SavedTokenData =  await tokenModel.create({userId:user._id,token:encryptedToken,ip,useragent})
-         console.log(SavedTokenData._id)
+         
          
         //send mail
         const verificationLink = `${process.env.Clinet_URL}/auth/verify?userId=${user._id}&token=${rawToken}&tokenid=${SavedTokenData._id}`
@@ -40,15 +41,7 @@ const registerUserService = async(name,email,password,ip,useragent) => {
         sendMail(email,name,verificationLink).catch((error) => {
             console.log("Mail sending failed" , error)
         })
-    
-
-        //return message
-        if(user){
-            return "User registered successfully"
-        }
-        else{
-            return "User registration failed"
-        }
+        return true
     } catch (error) {
         //return error
         console.log("User registration failed" , error)
@@ -62,14 +55,16 @@ const verifyUserService = async(userId,token) => {
         //find yuser and check if verified
         const user = await userModel.findById({_id:userId , isVerified:false})
         if(!user){
-            throw new Error("User is invalid")
+            console.log("User is invalid")
+            throw new AppError("User is invalid",400)
         }
          const tokenDb = await tokenModel.findOne({userId:userId})
         const encryptedToken = tokenDb.token
         //verify token
         const verifyTokenIsTrue = await verifyToken(token , encryptedToken)
         if(!verifyTokenIsTrue){
-            throw new Error("Invalid token")
+            console.log("Invalid token")
+            throw new AppError("Invalid token",400)
         }
         //updateUser and token as well
         user.isVerified = true
@@ -86,31 +81,29 @@ const verifyUserService = async(userId,token) => {
 }
 // user login service user 
 const loginUserService = async(email,password)=> {
- try {
+ 
     //find user
     const user = await userModel.findOne({email}).select("+password")
     if(!user){
-        throw new Error("User is invalid")
+        console.log("User is invalid")
+        throw new AppError("User is invalid",400)
     }
     //chekc if user is verified
     if(!user.isVerified){
-        throw new Error("User is not verified")
+        console.log("User is not verified")
+        throw new AppError("User is not verified",400)
     }
-    console.log(user)
     const hash = user.password
     //compare passwords
     const isPasswordMatched = await comparePassword(password,hash)
     if(!isPasswordMatched){
-        throw new Error("Password is invalid")
+        console.log("Password is invalid")
+        throw new AppError("Password is invalid",400)
     }
     //generate jwt
-  const token = await jwtSign(user._id)
+    const token = await jwtSign(user._id)
     //return usertoken
     return token
- } catch (error) {
-    console.log("User login failed" , error)
-    return error
- }
 }
 
 //Forgot Password service
