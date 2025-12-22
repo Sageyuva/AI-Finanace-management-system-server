@@ -11,11 +11,10 @@ const {ForgotPasswordUpdateMail} = require("../Utils/Mail/ForgotPasswordUpdateMa
 // user register service
 const registerUserService = async(name,email,password,ip,useragent) => {
 
-    try {
+ 
         //check if user exists
         const existingUser = await userModel.findOne({email})
         if(existingUser){
-            console.log("User already exists")
             throw new AppError("User already exists",400)
         }
         //hash password if user doesnt exist
@@ -41,12 +40,7 @@ const registerUserService = async(name,email,password,ip,useragent) => {
         sendMail(email,name,verificationLink).catch((error) => {
             console.log("Mail sending failed" , error)
         })
-        return true
-    } catch (error) {
-        //return error
-        console.log("User registration failed" , error)
-        return error
-    }
+  
 
 }
 // user verification service

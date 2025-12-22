@@ -14,25 +14,14 @@ const registerUserController = catchAsync(async (req, res) => {
   console.log(name , email , password , "controller is being triggered")
   // service throws error if something fails
   const user = await registerUserService(name, email, password, ip, useragent);
-
-  if( user ){
     return sendResponse(res, 201, "User registered successfully", null);
-  }
-  else{
-    return sendResponse(res, 400, "User registration failed", null);
-  }
 });
 
 //Verify User controller
 const verifyUserController = catchAsync(async(req,res)=> {
     const {userId,token} = req.query
     const user = await verifyUserService(userId,token)
-    if(user){
-        return sendResponse(res,200,"User verified successfully",user)
-    }
-    else{
-        return sendResponse(res,400,"User verification failed",user)
-    }
+    return sendResponse(res,200,"User verified successfully",user)
 })
 
 //Login User controller
