@@ -15,9 +15,11 @@ const apiRouter = express.Router()
 app.use(baseUrl,apiRouter)
 //import Routes
 const userAuthRoute = require("./Routes/userAuthRoute")
+const transactionRoute = require("./Routes/transactionRoute")
 
 //Routes
 apiRouter.use("/auth",userAuthRoute)
+apiRouter.use("/transaction",transactionRoute)
 
 
 //temparary imports and routes

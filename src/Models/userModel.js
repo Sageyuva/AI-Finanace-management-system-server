@@ -31,6 +31,10 @@ const userSchema = new mongoose.Schema({
     type:Boolean,
     default:true
    },   
+   transactions:[{
+    type:mongoose.Schema.Types.ObjectId,
+    ref:"transactionModel"
+   }],
 },{timestamps:true})
 
 
