@@ -1,4 +1,4 @@
-const {addTransactionService , getTransactionsService} = require("../Services/transactionsServices") 
+const {addTransactionService , getTransactionsService , dashboardDataService} = require("../Services/transactionsServices") 
 const catchAsync = require("../Utils/catchAsync")
 const sendResponse = require("../Utils/GlobalResponse/sendResponse")
 const addTransactionController = catchAsync(async (req,res)=>{
@@ -14,4 +14,9 @@ const getServices = catchAsync(async (req,res)=>{
     return sendResponse(res,200,"Transactions fetched successfully",transactions)
 })
 
-module.exports = {addTransactionController , getServices}
+const dashboardDataController = catchAsync(async (req,res)=>{
+    const userId = req.user._id
+    const data = await dashboardDataService(userId)
+    return sendResponse(res,200,"Dashboard data fetched successfully",data)
+})
+module.exports = {addTransactionController , getServices , dashboardDataController}
