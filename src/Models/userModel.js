@@ -30,7 +30,11 @@ const userSchema = new mongoose.Schema({
    termsAndConditions:{
     type:Boolean,
     default:true
-   },   
+   },
+   balance:{
+    type:Number,
+    default:0
+   },
    transactions:[{
     type:mongoose.Schema.Types.ObjectId,
     ref:"transactionModel"

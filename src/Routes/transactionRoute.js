@@ -1,8 +1,10 @@
 const {addTransactionController , getServices , dashboardDataController} = require ("../Controllers/transactionController")
+const {updateUserBalanceController} = require("../Controllers/userOpsController")
 const express = require("express")
 const router = express.Router()
 const {protectUser} = require("../Middleware/secure")
 router.post("/addNew",protectUser,addTransactionController)
 router.get("/getTransactions",protectUser,getServices)
 router.get("/dashboardData",protectUser,dashboardDataController)
+router.post("/updateBalance",protectUser,updateUserBalanceController)
 module.exports = router

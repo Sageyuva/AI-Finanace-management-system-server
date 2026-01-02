@@ -22,9 +22,11 @@ const dashboardDataService = async (userId) => {
   endOfWeek.setHours(23, 59, 59, 999)
 
   const transactionIds = user.transactions
-
-  const [todayTransactions, weekTransactions, last10Transactions] =
+  const balance = await userModel.findById(userId).select("balance")
+  const userBalance = balance.balance
+  const [todayTransactions, weekTransactions, last10Transactions ] =
     await Promise.all([
+  
       // Today
       transactionModel.find({
         _id: { $in: transactionIds },
@@ -43,20 +45,31 @@ const dashboardDataService = async (userId) => {
         .limit(10)
     ])
 
-  return {
+  return { 
     todayTransactions,
     weekTransactions,
-    last10Transactions
+    last10Transactions,
+    userBalance
   }
 }
 
-
+//Add transaction service
 const addTransactionService = async (userId , amount , category , description)=>{
-const user = await userModel.findById(userId)
+//check if user is valid
+  const user = await userModel.findById(userId)
 if(!user){
     throw new Error("User not found")
 }
 
+if(user.balance===0){
+    throw new Error("Insufficient balance")
+}
+
+//update user balance 
+user.balance = user.balance - amount
+await user.save()
+
+//add teh data into teh database
 const transaction = await transactionModel.create({
     userId,
     amount,
@@ -66,6 +79,7 @@ const transaction = await transactionModel.create({
 })
 
 
+//push the transaction id into the user transactions array
 user.transactions.push(transaction._id)
 await user.save()
 return transaction
