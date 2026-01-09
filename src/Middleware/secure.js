@@ -32,7 +32,7 @@ const protectUser = async (req, res, next) => {
         }
     }
     else {
-        return res.status(401).json({ message: "Invalid token" })
+        return res.status(401).json({ message: "No token" })
     }
 }
 module.exports = { jwtSign, protectUser }

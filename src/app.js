@@ -1,25 +1,29 @@
 const express = require("express")
 const app = express()
 const cors = require("cors")
+const cookieParser = require("cookie-parser")
+
 
 const globalErrorHandler = require('./Middleware/globalErrorRes')
 //middleware
 app.use(express.json())
+app.use(cookieParser());
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:5173" , "https://ai-finanace-management-system-clien.vercel.app"],
+  origin: ["http://localhost:3000", "http://localhost:5173", "https://ai-finanace-management-system-clien.vercel.app"],
   credentials: true
 }))
+
 //define base url
 const baseUrl = process.env.BASE_URL
 const apiRouter = express.Router()
-app.use(baseUrl,apiRouter)
+app.use(baseUrl, apiRouter)
 //import Routes
 const userAuthRoute = require("./Routes/userAuthRoute")
 const transactionRoute = require("./Routes/transactionRoute")
 
 //Routes
-apiRouter.use("/auth",userAuthRoute)
-apiRouter.use("/transaction",transactionRoute)
+apiRouter.use("/auth", userAuthRoute)
+apiRouter.use("/transaction", transactionRoute)
 
 
 //temparary imports and routes
