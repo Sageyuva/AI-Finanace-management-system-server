@@ -14,7 +14,7 @@ app.use(cors({
 }))
 
 //define base url
-const baseUrl = process.env.BASE_URL
+const baseUrl = process.env.BASE_URL || "/api/v1"
 const apiRouter = express.Router()
 app.use(baseUrl, apiRouter)
 //import Routes
