@@ -24,9 +24,9 @@ const dashboardDataService = async (userId) => {
   const transactionIds = user.transactions
   const balance = await userModel.findById(userId).select("balance")
   const userBalance = balance.balance
-  const [todayTransactions, weekTransactions, last10Transactions ] =
+  const [todayTransactions, weekTransactions, last10Transactions] =
     await Promise.all([
-  
+
       // Today
       transactionModel.find({
         _id: { $in: transactionIds },
@@ -45,7 +45,7 @@ const dashboardDataService = async (userId) => {
         .limit(10)
     ])
 
-  return { 
+  return {
     todayTransactions,
     weekTransactions,
     last10Transactions,
@@ -54,35 +54,35 @@ const dashboardDataService = async (userId) => {
 }
 
 //Add transaction service
-const addTransactionService = async (userId , amount , category , description)=>{
-//check if user is valid
+const addTransactionService = async (userId, amount, category, description) => {
+  //check if user is valid
   const user = await userModel.findById(userId)
-if(!user){
+  if (!user) {
     throw new Error("User not found")
-}
+  }
 
-if(user.balance===0){
+  if (user.balance === 0) {
     throw new Error("Insufficient balance")
-}
+  }
 
-//update user balance 
-user.balance = user.balance - amount
-await user.save()
+  //update user balance 
+  user.balance = user.balance - amount
+  await user.save()
 
-//add teh data into teh database
-const transaction = await transactionModel.create({
+  //add teh data into teh database
+  const transaction = await transactionModel.create({
     userId,
     amount,
     category,
     description,
-    type : "debit"
-})
+    type: "debit"
+  })
 
 
-//push the transaction id into the user transactions array
-user.transactions.push(transaction._id)
-await user.save()
-return transaction
+  //push the transaction id into the user transactions array
+  user.transactions.push(transaction._id)
+  await user.save()
+  return transaction
 }
 
 
@@ -93,6 +93,8 @@ const getTransactionsService = async (userId) => {
     throw new Error("User not found")
   }
 
+  const totalTransactions = await user.transactions.length
+
   await user.populate({
     path: "transactions",
     options: {
@@ -101,8 +103,9 @@ const getTransactionsService = async (userId) => {
     }
   })
 
-  return user.transactions
+
+  return { transactions: user.transactions, totalTransactions }
 }
 
 
-module.exports = {addTransactionService , getTransactionsService , dashboardDataService}
+module.exports = { addTransactionService, getTransactionsService, dashboardDataService }
