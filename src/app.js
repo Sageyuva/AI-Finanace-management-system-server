@@ -1,32 +1,40 @@
 const express = require("express")
 const app = express()
+
+// ✅ ADD THIS LINE (VERY IMPORTANT FOR RENDER / HTTPS)
+app.set("trust proxy", 1);
+
 const cors = require("cors")
 const cookieParser = require("cookie-parser")
 
-
 const globalErrorHandler = require('./Middleware/globalErrorRes')
-//middleware
+
+// middleware
 app.use(express.json())
-app.use(cookieParser());
+app.use(cookieParser())
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:5173", "https://ai-finanace-management-system-clien.vercel.app"],
+  origin: [
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "https://ai-finanace-management-system-clien.vercel.app"
+  ],
   credentials: true
 }))
 
-//define base url
+// define base url
 const baseUrl = process.env.BASE_URL || "/api/v1"
 const apiRouter = express.Router()
 app.use(baseUrl, apiRouter)
-//import Routes
+
+// import Routes
 const userAuthRoute = require("./Routes/userAuthRoute")
 const transactionRoute = require("./Routes/transactionRoute")
 
-//Routes
+// Routes
 apiRouter.use("/auth", userAuthRoute)
 apiRouter.use("/transaction", transactionRoute)
 
-
-//temparary imports and routes
+// temporary route
 const mongoose = require("mongoose")
 app.get("/api/v1", async (req, res) => {
   try {
@@ -35,7 +43,7 @@ app.get("/api/v1", async (req, res) => {
     }
 
     const result = await mongoose.connection
-      .collection("usermodels")   // <-- FIXED
+      .collection("usermodels")
       .deleteMany({});
 
     res.send(`Done. Deleted ${result.deletedCount} documents.`);
